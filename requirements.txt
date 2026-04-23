@@ -1,0 +1,7 @@
+pyspark==3.5.3
+pyarrow==18.1.0
+pandas==2.2.3
+fastapi==0.115.6
+uvicorn==0.34.0
+requests==2.32.3
+numpy==2.2.2
