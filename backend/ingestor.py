@@ -46,9 +46,14 @@ def fetch_flights() -> list[dict]:
     
     if not states:
         return []
+    seen = set()
     
     flights = []
     for state in states:
+        icao = state[0]
+        if icao in seen:
+            continue
+        seen.add(icao)
         if len(flights) == 0 and len(state) > 0:
             print(f"First state sample: {state[:5]}...")
         
@@ -63,9 +68,9 @@ def fetch_flights() -> list[dict]:
         
         flight = {
             "event_time": timestamp,
-            "ingest_time": int(datetime.now().timestamp()),
+            "ingest_time": timestamp,
             "icao24": state[0],
-            "callsign": state[1].strip() if state[1] else None,
+            "callsign": state[1].strip() if isinstance(state[1], str) else None,
             "origin_country": state[2],
             "time_position": state[3],
             "last_contact": state[4],
@@ -85,6 +90,9 @@ def fetch_flights() -> list[dict]:
         }
         flights.append(flight)
     
+    if not flights:
+        print("No valid flight data returned from OpenSky")
+        return []
     print(f"Processed {len(flights)} flights with valid coordinates")
     return flights
         
@@ -96,7 +104,7 @@ def save_to_parquet(flights: list[dict]):
     
     df = pd.DataFrame(flights)
     now = datetime.now()
-    filename = f"flights_{now.strftime('%Y%m%d_%H%M%S')}.parquet"
+    filename = f"flights_{now.strftime('%Y%m%d_%H%M')}.parquet"
 
     partition_path = DATA_DIR / f"year={now.year}" / f"month={now.month:02d}" / f"day={now.day:02d}"
     partition_path.mkdir(parents=True, exist_ok=True)

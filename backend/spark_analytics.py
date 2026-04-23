@@ -38,7 +38,9 @@ def load_flight_data(spark: SparkSession, path: str):
 def analytics_top_airlines(df):
     print("TOP 10 BUSIEST AIRLINES\n")
 
-    airline_df = df.filter(F.col("callsign").isNotNull()).withColumn(
+    airline_df = df.filter(
+        F.col("callsign").isNotNull() & (F.length(F.col("callsign")) >= 3)
+    ).withColumn(
         "airline", F.substring(F.col("callsign"), 1, 3)
     )
 
@@ -62,7 +64,7 @@ def analytics_top_airlines(df):
 
 def analytics_peak_hours(df):
     print("PEAK HOURS OF AIR TRAFFIC\n")
-    hourly_df = df.withColumn("hour", F.from_unixtime("event_time", "HH"))
+    hourly_df = df
 
     result = (
         hourly_df.groupBy("hour", "origin_country")
@@ -177,6 +179,10 @@ def run_analytics():
 
     try:
         df = load_flight_data(spark, DATA_INPUT)
+
+        df = df.dropna(subset=["latitude", "longitude", "icao24"])
+        df = df.dropDuplicates(["icao24"])
+        df = df.orderBy(F.col("event_time").desc())
 
         df.cache()
         print(f"Loaded {df.count()} flight records")

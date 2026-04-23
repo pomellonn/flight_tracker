@@ -169,18 +169,25 @@ def get_flights(
             dfs.append(df)
         
         df = pd.concat(dfs, ignore_index=True)
-        
-    
+
         df = df.dropna(subset=['latitude', 'longitude'])
-        
+
+        # ensure stable latest-first ordering and unique aircraft
+        if 'last_contact' in df.columns:
+            df = df.sort_values('last_contact', ascending=False)
+
+        if 'icao24' in df.columns:
+            df = df[df['icao24'].notna()]
+            df = df.drop_duplicates(subset=['icao24'], keep='first')
 
         filtered = df[
             (df['latitude'] >= min_lat) &
             (df['latitude'] <= max_lat) &
             (df['longitude'] >= min_lon) &
             (df['longitude'] <= max_lon)
-        ].head(limit)
-        
+        ]
+
+        filtered = filtered.head(limit)
 
         flights = []
         for _, row in filtered.iterrows():
@@ -212,7 +219,8 @@ def get_opensky_states(
     lamin: float = Query(-90, description="Min latitude"),
     lamax: float = Query(90, description="Max latitude"),
     lomin: float = Query(-180, description="Min longitude"),
-    lomax: float = Query(180, description="Max longitude")
+    lomax: float = Query(180, description="Max longitude"),
+    icao24: Optional[str] = Query(None, description="Filter by ICAO24 hex code")
 ):
 
     raw_data = RAW_DATA
@@ -241,6 +249,12 @@ def get_opensky_states(
             (df['longitude'] >= lomin) &
             (df['longitude'] <= lomax)
         ]
+
+        if icao24:
+            filtered = filtered[
+                filtered['icao24'].notna() &
+                (filtered['icao24'].str.lower() == icao24.lower())
+            ]
     
         timestamp = int(df['event_time'].max()) if len(df) > 0 else int(pd.Timestamp.now().timestamp())
         
@@ -287,13 +301,14 @@ def get_latest_flights(limit: int = 1000):
         parquet_files = sorted(Path(raw_data).rglob("*.parquet"))[-5:]
         dfs = [pd.read_parquet(f) for f in parquet_files]
         df = pd.concat(dfs, ignore_index=True)
-        
+
+        if 'last_contact' in df.columns:
+            df = df.sort_values('last_contact', ascending=False)
 
         if 'icao24' in df.columns:
-            df = df.drop_duplicates(subset=['icao24'], keep='last')
-        
+            df = df.drop_duplicates(subset=['icao24'], keep='first')
+
         df = df.head(limit)
-        
 
         records = df.to_dict(orient="records")
         for record in records:

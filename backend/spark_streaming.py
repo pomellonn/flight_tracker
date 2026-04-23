@@ -28,22 +28,31 @@ def fetch_flights_batch():
         
         states = data.get("states", [])
         timestamp = data.get("time", int(time.time()))
+        seen = set()
         
         flights = []
         for state in states:
+            if not state or len(state) < 17:
+                continue
+
+            icao = state[0]
+            if icao in seen:
+                continue
+            seen.add(icao)
+            
             if state[5] is None or state[6] is None:
                 continue
             
             flights.append({
                 "event_time": timestamp,
                 "icao24": state[0],
-                "callsign": state[1].strip() if state[1] else None,
+                "callsign": state[1].strip() if isinstance(state[1], str) else None,
                 "origin_country": state[2],
                 "longitude": state[5],
                 "latitude": state[6],
                 "baro_altitude": state[7] if state[7] else 0,
                 "velocity": state[9] if state[9] else 0,
-                "on_ground": str(state[8])
+                "on_ground": bool(state[8]) if state[8] is not None else False
             })
         
         return flights
@@ -75,8 +84,6 @@ def process_stream(spark: SparkSession, batch_interval: int):
             if flights:
                 df = spark.createDataFrame(flights, schema)
        
-                total = df.count() 
-       
                 by_country = df.groupBy("origin_country") \
                     .agg(F.count("*").alias("count")) \
                     .orderBy(F.col("count").desc()) \
@@ -87,10 +94,16 @@ def process_stream(spark: SparkSession, batch_interval: int):
                 
 
                 avg_alt = df.select(F.avg("baro_altitude")).first()[0]
-                print(f"Average altitude: {avg_alt:.0f}m")
+                if avg_alt is not None:
+                    print(f"Average altitude: {avg_alt:.0f}m")
+                else:
+                    print("Average altitude: N/A")
             
                 avg_vel = df.select(F.avg("velocity")).first()[0]
-                print(f"Average velocity: {avg_vel:.0f} m/s")
+                if avg_vel is not None:
+                    print(f"Average velocity: {avg_vel:.0f} m/s")
+                else:
+                    print("Average velocity: N/A")
                 
                 airborne = df.filter(F.col("on_ground") == "false").count()
                 ground = df.filter(F.col("on_ground") == "true").count()
