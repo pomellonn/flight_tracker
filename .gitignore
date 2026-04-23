@@ -24,7 +24,14 @@ dist-ssr
 *.sw?
 
 # Misc
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
+.env.*
+!env.example
+
+#spark
+*.parquet
+./data/processed/
+./data/raw/
+metastore_db/
+derby.log
+spark-warehouse/
