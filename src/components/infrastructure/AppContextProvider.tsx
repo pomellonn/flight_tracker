@@ -3,6 +3,8 @@ import { ServiceProvider } from '../../services/infrastructure/serviceProvider.j
 import { ThemeKeys } from '../../styles/index.js';
 
 // Types
+import type { ViewState } from 'react-map-gl/mapbox';
+import type { IMapGeoBounds } from '../../opensky/types.js';
 import type { IService } from '../../services/infrastructure/serviceTypes.js';
 
 export class SettingKeys {
@@ -21,8 +23,11 @@ const getDefaultSettings = () => {
 export interface AppContextProps {
   hasConnectionErrors: boolean;
   activeThemeName: string;
+  mapViewState?: ViewState;
+  mapGeoBounds?: IMapGeoBounds;
   getService: <T extends IService>(serviceKey: string) => T | undefined;
   changeTheme: (themeName: string) => void;
+  setMapViewState: (viewState: ViewState, geoBounds: IMapGeoBounds) => void;
   pushSetting: (key: string, value: any) => boolean;
   pullSetting: (key: string) => any;
 };
@@ -31,8 +36,11 @@ export interface AppContextProps {
 export const AppContext = React.createContext<AppContextProps>({
   hasConnectionErrors: false,
   activeThemeName: ThemeKeys.DarkTheme,
+  mapViewState: undefined,
+  mapGeoBounds: undefined,
   getService: () => undefined,
   changeTheme: (themeName: string) => { },
+  setMapViewState: (viewState: ViewState, geoBounds: IMapGeoBounds) => { },
   pushSetting: (key: string, value: any) => false,
   pullSetting: (key: string) => undefined
 });
@@ -55,6 +63,8 @@ const AppContextProvider: React.FC<Props> = (props) => {
   // States
   const [hasConnectionErrors, setConnectionErrors,] = useState(false);
   const [activeThemeName, setActiveThemeName] = useState(ThemeKeys.DarkTheme);
+  const [mapViewState, setMapViewState] = useState<ViewState | undefined>(undefined);
+  const [mapGeoBounds, setMapGeoBounds] = useState<IMapGeoBounds | undefined>(undefined);
   const [settingsStorage, setSettingsStorage] = useState<{ [key: string]: any }>(getDefaultSettings());
 
   // Effects
@@ -76,6 +86,11 @@ const AppContextProvider: React.FC<Props> = (props) => {
       serviceProviderRef.current.stopServices();
     }
   }, []);
+
+  const handleSetMapViewState = (viewState: ViewState, geoBounds: IMapGeoBounds) => {
+    setMapViewState(viewState);
+    setMapGeoBounds(geoBounds);
+  };
 
   const handleThemeChange = (themeName: string) => {
 
@@ -107,8 +122,11 @@ const AppContextProvider: React.FC<Props> = (props) => {
         {
           hasConnectionErrors: hasConnectionErrors,
           activeThemeName: activeThemeName,
+          mapViewState: mapViewState,
+          mapGeoBounds: mapGeoBounds,
           getService: serviceProviderRef.current.getService,
           changeTheme: handleThemeChange,
+          setMapViewState: handleSetMapViewState,
           pushSetting: handlePushSetting,
           pullSetting: handlePullSetting
         }} >

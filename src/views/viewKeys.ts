@@ -7,11 +7,13 @@ import type { INavigationElement } from '../navigation/navigationTypes.js';
 import FlightIcon from '@mui/icons-material/Flight';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export class ViewKeys {
   public static MapView: string = 'MapView';
   public static SettingsView: string = 'SettingsView';
   public static AboutView: string = 'AboutView';
+  public static AnalyticsView: string = 'AnalyticsView';
 };
 
 export const mapViewNavigationData: INavigationElement = {
@@ -36,4 +38,13 @@ export const aboutViewNavigationData: INavigationElement = {
   importPath: 'views/AboutView',
   type: NavigationTypeEnumeration.Dialog,
   Icon: InfoIcon
+};
+
+
+export const analyticsViewNavigationData: INavigationElement = {
+  key: 'analytics',
+  name: 'Analytics',
+  importPath: 'views/AnalyticsView',
+  type: NavigationTypeEnumeration.View,
+  Icon: AssessmentIcon,
 };

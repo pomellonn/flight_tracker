@@ -69,7 +69,7 @@ export class RESTService extends Service implements IRESTService {
 
     var requestInit: RequestInit = {
       method: method,               // *GET, POST, PUT, DELETE, etc.
-      mode: "same-origin",          // no-cors, cors, *same-origin
+      mode: "cors",                 // no-cors, cors, *same-origin (cors for cross-origin API)
       cache: "default",             // *default, no-cache, reload, force-cache, only-if-cached
       credentials: "same-origin",   // include, *same-origin, omit
       redirect: "follow",           // manual, *follow, error

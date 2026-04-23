@@ -40,6 +40,11 @@ const FlightMap: React.FC<Props> = (props) => {
 
   const getDefaultViewState = () => {
 
+    // Use saved view state if available
+    if (appContext.mapViewState) {
+      return appContext.mapViewState;
+    }
+
     const defaultViewState: ViewState = {
       latitude: Constants.DEFAULT_LATITUDE,
       longitude: Constants.DEFAULT_LONGITUDE,
@@ -171,9 +176,13 @@ const FlightMap: React.FC<Props> = (props) => {
 
     setViewState(e.viewState);
 
+    // Save view state and geo bounds to context
     const mapGeoBounds = getMapGeoBounds();
+    appContext.setMapViewState(e.viewState, mapGeoBounds);
+
+    const mapGeoBounds2 = getMapGeoBounds();
     if (props.onMapChange)
-      props.onMapChange(viewState, mapGeoBounds);
+      props.onMapChange(viewState, mapGeoBounds2);
   };
 
   // Helpers
@@ -230,7 +239,7 @@ const FlightMap: React.FC<Props> = (props) => {
         </Box>
       }
 
-      {props.selectedAircraft &&
+      {props.selectedAircraft?.stateVector &&
         <Box
           sx={{
             position: 'absolute',

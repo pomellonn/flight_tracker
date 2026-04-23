@@ -9,7 +9,7 @@ import { RESTService } from './../services/restService.js';
 import { GeospatialService } from './../services/geospatialService.js';
 import { OpenSkyAPIService } from './../services/openSkyAPIService.js';
 import { ServiceKeys } from '../services/serviceKeys.js';
-import { ThemeKeys, DarkTheme, LightTheme, PineappleTheme } from './../styles/index.js';
+import { ThemeKeys, DarkTheme, LightTheme} from './../styles/index.js';
 
 // Types
 import type { IService } from './../services/infrastructure/serviceTypes.js';
@@ -32,15 +32,14 @@ const App: React.FC = () => {
       case ThemeKeys.LightTheme: {
         return LightTheme;
       };
-      case ThemeKeys.PineappleTheme: {
-        return PineappleTheme;
-      };
+
       default:
         return DarkTheme;
     };
   };
 
   const handleThemeChange = (themeName: string) => {
+    console.log('Theme change to:', themeName);
     setThemeName(themeName);
   };
 
@@ -82,8 +81,6 @@ const App: React.FC = () => {
           justifyItems: 'center',
           justifyContent: 'center'
         }}>
-        <CssBaseline
-          enableColorScheme={true} />
         <CircularProgress
           color='primary'
           size={128} />
@@ -94,8 +91,11 @@ const App: React.FC = () => {
   return (
 
     <BrowserRouter>
+      <CssBaseline
+        enableColorScheme={true} />
       <ThemeProvider
-        theme={getTheme()}>
+        theme={getTheme()}
+        key={themeName}>
 
         <Suspense
           fallback={renderFallback()}>
@@ -108,8 +108,6 @@ const App: React.FC = () => {
               navigationItems={navigationElements}
               onInject={navigationElement => React.lazy(() => getImportableView(navigationElement.importPath))}>
 
-              <CssBaseline
-                enableColorScheme={true} />
               <RouterPage />
             </NavigationProvider>
           </AppContextProvider>
