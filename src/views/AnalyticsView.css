@@ -1,0 +1,190 @@
+  :root {
+    --bg:      #0f172a;
+    --surface: #1e293b;
+    --border:  #334155;
+    --text:    #e2e8f0;
+    --muted:   #64748b;
+    --accent:  #3b82f6;
+    --accent2: #06b6d4;
+    --bar-bg:  #1e293b;
+    --mono:    ui-monospace, monospace;
+  }
+ 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  .av-root {
+    min-height: 100vh;
+    overflow-y: auto;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+  }
+ 
+  /* Header */
+  .av-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .av-header-left  { display: flex; align-items: center; gap: 10px; }
+  .av-header-right { display: flex; align-items: center; gap: 12px; }
+  .av-logo         { display: flex; align-items: center; gap: 8px; }
+  .av-logo-icon    { font-size: 20px; }
+  .av-logo-title   { font-size: 16px; font-weight: 600; }
+  .av-logo-sub     { font-size: 12px; color: var(--muted); }
+  .av-updated      { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+ 
+  .av-refresh-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .av-refresh-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .av-refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .av-refresh-icon { font-size: 15px; }
+  @keyframes av-spin { to { transform: rotate(360deg); } }
+ 
+  /* Main */
+  .av-main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+ 
+  .av-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+ 
+  /* Card */
+  .av-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    grid-column: span 6;
+  }
+  .av-card:nth-child(3),
+  .av-card:nth-child(5) { grid-column: span 12; }
+  @media (max-width: 800px) {
+    .av-card { grid-column: span 12 !important; }
+  }
+ 
+  .av-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .av-card-icon   { font-size: 16px; }
+  .av-card-title  { font-size: 14px; font-weight: 600; }
+ 
+  /* Loading / Error */
+  .av-center {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 50vh; gap: 12px;
+  }
+  .av-spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    animation: av-spin 0.8s linear infinite;
+  }
+  .av-loading-text { color: var(--muted); font-size: 13px; }
+  .av-error-card {
+    background: var(--surface); border: 1px solid #ef4444;
+    border-radius: 10px; padding: 32px 40px; text-align: center; max-width: 340px;
+  }
+  .av-error-icon  { font-size: 28px; margin-bottom: 10px; color: #ef4444; }
+  .av-error-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .av-error-msg   { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .av-retry-btn {
+    padding: 8px 20px; border-radius: 6px; border: none;
+    background: #ef4444; color: #fff; font-size: 13px; cursor: pointer;
+  }
+  .av-retry-btn:hover { opacity: 0.85; }
+ 
+  /* Airlines */
+  .av-list      { display: flex; flex-direction: column; gap: 12px; }
+  .av-list-row  { display: flex; align-items: flex-start; gap: 10px; }
+  .av-list-rank {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: var(--bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--muted); flex-shrink: 0; margin-top: 1px;
+  }
+  .av-list-main     { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .av-list-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .av-airline-code  {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--accent2); padding: 1px 6px;
+    border-radius: 4px; border: 1px solid var(--border);
+  }
+  .av-country-badge {
+    font-size: 11px; color: var(--muted);
+    padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border);
+  }
+  .av-count  { font-size: 12px; font-family: var(--mono); margin-left: auto; }
+  .av-pills  { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 2px; }
+ 
+  /* Heatmap */
+  .av-heatmap {
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    gap: 5px; margin-bottom: 8px;
+  }
+  .av-hour-cell {
+    border-radius: 6px; padding: 6px 3px 5px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    cursor: default;
+  }
+  .av-hour-label { font-size: 10px; color: var(--text); font-family: var(--mono); }
+  .av-hour-count { font-size: 9px;  color: var(--text); font-family: var(--mono); }
+  .av-heatmap-legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+ 
+  /* Altitude */
+  .av-alt-list { display: flex; flex-direction: column; gap: 10px; }
+  .av-alt-row  { display: grid; grid-template-columns: 120px 1fr 65px; align-items: center; gap: 10px; }
+  .av-alt-label { display: flex; flex-direction: column; gap: 2px; }
+  .av-alt-track { position: relative; height: 5px; background: var(--bg); border-radius: 3px; }
+  .av-alt-range {
+    position: absolute; height: 100%;
+    background: rgba(59,130,246,0.3); border-radius: 3px;
+    border: 1px solid rgba(59,130,246,0.4);
+  }
+  .av-alt-avg {
+    position: absolute; width: 2px; height: 12px;
+    background: var(--accent); border-radius: 1px;
+    top: -3px; transform: translateX(-50%);
+  }
+  .av-alt-avg-label { font-size: 11px; font-family: var(--mono); color: var(--muted); text-align: right; }
+ 
+  /* Countries */
+  .av-country-table  { display: flex; flex-direction: column; }
+  .av-country-header {
+    display: grid; grid-template-columns: 1fr 80px 60px 90px 100px;
+    gap: 8px; padding: 5px 0 8px; border-bottom: 1px solid var(--border);
+    font-size: 11px; text-transform: uppercase; color: var(--muted);
+  }
+  .av-country-row {
+    display: grid; grid-template-columns: 1fr 80px 60px 90px 100px;
+    gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px; align-items: center;
+  }
+  .av-country-row:hover { background: var(--bg); }
+  .av-country-name-col { display: flex; flex-direction: column; gap: 3px; }
+ 
+  /* Regions */
+  .av-regions    { display: flex; flex-direction: column; gap: 12px; }
+  .av-region-row { display: flex; align-items: flex-start; gap: 10px; }
+  .av-region-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .av-region-main    { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .av-region-name-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .av-region-name  { font-size: 13px; font-weight: 600; }
+  .av-region-pct   { font-size: 12px; font-family: var(--mono); color: var(--accent); }
+  .av-region-count { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-left: auto; }

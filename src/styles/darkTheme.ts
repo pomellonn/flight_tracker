@@ -1,5 +1,4 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
-import { blue, pink, purple, grey } from '@mui/material/colors';
 
 const rawDarkTheme = createTheme({
   map: {
@@ -7,22 +6,29 @@ const rawDarkTheme = createTheme({
   },
   typography: {
     htmlFontSize: 10,
+    fontFamily: 'system-ui, sans-serif',
   },
   palette: {
     mode: 'dark',
     primary: {
-      main: blue[500],
+      main: '#3b82f6', // --accent
     },
     secondary: {
-      main: pink[500],
+      main: '#06b6d4', // --accent2
     },
     background: {
-      paper: grey[800]
+      default: '#0f172a', // --bg
+      paper: '#1e293b', // --surface
     },
+    text: {
+      primary: '#e2e8f0', // --text
+      secondary: '#64748b', // --muted
+    },
+    divider: '#334155', // --border
     command: {
-      main: purple[500],
-      light: purple[400],
-      dark: purple[600],
+      main: '#3b82f6',
+      light: '#60a5fa',
+      dark: '#2563eb',
     }
   },
 });
